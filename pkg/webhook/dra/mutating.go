@@ -27,6 +27,7 @@ import (
 	resourceapi "k8s.io/api/resource/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/rand"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
@@ -113,6 +114,9 @@ func (a *MutatingAdmission) handelContainer(ctx context.Context, container *core
 
 	// TODO: refactor the name generator to avoid too long name and avoid empty name for generated pod.
 	rcName := fmt.Sprintf("%s-%s-%s", pod.Namespace, pod.Name, container.Name)
+	if pod.Name == "" {
+		rcName = fmt.Sprintf("%s-%s-%s", pod.Namespace, rand.String(5), container.Name)
+	}
 	resourceclaim := a.buildResourceClaim(rcName, pod.Namespace)
 
 	resourceclaim.Spec.Devices.Requests[0].Exactly.Count = countQty.Value()
