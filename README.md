@@ -25,22 +25,29 @@ This webhook automatically transforms Pod specifications that request GPU resour
 
 You need to ensure [cert-manager](https://cert-manager.io/docs/installation/) is installed before installing the webhook.
 
-Then you can install the webhook with the following command:
+Add the HAMi-DRA Helm repository:
 ```bash
-helm install hami-dra ./charts/hami-dra
+helm repo add hami-dra https://project-hami.github.io/HAMi-DRA
+helm repo update
+```
+
+Install the chart:
+```bash
+helm install hami-dra hami-dra/hami-dra
+```
+
+To upgrade to the latest version in the future:
+```bash
+helm repo update
+helm upgrade hami-dra hami-dra/hami-dra
 ```
 
 If you are not using gpu-operator provided containerd drivers, you can use the following command to install the webhook:
 ```bash
-helm install hami-dra ./charts/hami-dra \
---set drivers.nvidia.containerDriver=false
+helm install hami-dra hami-dra/hami-dra \
+  --set drivers.nvidia.containerDriver=false
 ```
 
-To disable the monitor component:
-```bash
-helm install hami-dra ./charts/hami-dra \
---set monitor.enabled=false
-```
 
 Then [use the same as hami](https://project-hami.io/zh/docs/userguide/nvidia-device/examples/use-exclusive-card/).
 
@@ -48,7 +55,7 @@ Then [use the same as hami](https://project-hami.io/zh/docs/userguide/nvidia-dev
 
 ### Device Resources
 
-Configure device resources in `charts/hami-dra/values.yaml`:
+Configure device resources via `--set` flags or a custom `values.yaml`. The default resource names are:
 
 ```yaml
 resourceName: "nvidia.com/gpu"
