@@ -4,7 +4,6 @@ metadata:
   name: {{ include "hami.dra.webhook.fullname" . }}-device-config
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/component: hami-scheduler
     {{- include "hami-dra-webhook.selectorLabels" . | nindent 4 }}
 data:
   device-config.yaml: |-
