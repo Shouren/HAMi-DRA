@@ -87,16 +87,15 @@ func (a *MutatingAdmission) Handle(ctx context.Context, req admission.Request) a
 
 	marshaledBytes, err := json.Marshal(job)
 	if err != nil {
-		// Cleanup the ResourceClaims created for this job
 		for _, rctName := range rctNameList {
-			deletionErr := a.Client.Delete(ctx, &resourceapi.ResourceClaim{
+			deletionErr := a.Client.Delete(ctx, &resourceapi.ResourceClaimTemplate{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      rctName,
 					Namespace: job.Namespace,
 				},
 			})
 			if deletionErr != nil {
-				klog.V(5).Infof("Failed to delete ResourceClaim(%s/%s) for request: %s after an error occurs", job.Namespace, rctName, req.Operation)
+				klog.V(5).Infof("Failed to delete ResourceClaimTemplate(%s/%s) for request: %s after an error occurs", job.Namespace, rctName, req.Operation)
 			}
 		}
 		return admission.Errored(http.StatusInternalServerError, err)
