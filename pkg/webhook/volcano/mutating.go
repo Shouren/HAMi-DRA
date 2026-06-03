@@ -18,6 +18,7 @@ package volcano
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -124,8 +125,12 @@ func (a *MutatingAdmission) handelContainerTemplate(ctx context.Context, contain
 		return "", nil
 	}
 
-	// TODO: refactor the name generator to avoid too long name and avoid empty name for generated pod.
-	rctName := fmt.Sprintf("%s-%s-%s", namespace, name, container.Name)
+	raw := fmt.Sprintf("%s-%s-%s", namespace, name, container.Name)
+	rctName := raw
+	if len(raw) > 253 {
+		h := sha256.Sum256([]byte(raw))
+		rctName = fmt.Sprintf("%s-%x", raw[:220], h[:4])
+	}
 	resourceclaimtemplate := a.buildResourceClaimTemplate(rctName, namespace)
 
 	resourceclaimtemplate.Spec.Spec.Devices.Requests[0].Exactly.Count = countQty.Value()
