@@ -61,7 +61,7 @@ func (v *ValidatingAdmission) Handle(ctx context.Context, req admission.Request)
 			},
 		})
 		if err != nil && !apierrors.IsNotFound(err) {
-			klog.Warningf("Failed to delete ResourceClaim %s/%s: %v", job.Namespace, resourceClaimName, err)
+			klog.Warningf("Failed to delete ResourceClaimTemplate %s/%s: %v", job.Namespace, resourceClaimName, err)
 			continue
 		}
 	}
