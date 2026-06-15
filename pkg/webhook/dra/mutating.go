@@ -61,7 +61,7 @@ func (a *MutatingAdmission) Handle(ctx context.Context, req admission.Request) a
 
 	for i := range pod.Spec.Containers {
 		container := &pod.Spec.Containers[i]
-		rcName, err := a.handelContainer(ctx, container, pod)
+		rcName, err := a.handleContainer(ctx, container, pod)
 		if err != nil {
 			return admission.Errored(http.StatusInternalServerError, err)
 		}
@@ -106,7 +106,7 @@ func (a *MutatingAdmission) Handle(ctx context.Context, req admission.Request) a
 	return admission.PatchResponseFromRaw(req.Object.Raw, marshaledBytes)
 }
 
-func (a *MutatingAdmission) handelContainer(ctx context.Context, container *corev1.Container, pod *corev1.Pod) (string, error) {
+func (a *MutatingAdmission) handleContainer(ctx context.Context, container *corev1.Container, pod *corev1.Pod) (string, error) {
 	countResourceName := corev1.ResourceName(a.DeviceConfig.ResourceCountName)
 	countQty, ok := container.Resources.Limits[countResourceName]
 	if !ok {
